@@ -1,8 +1,8 @@
-# Forest Disturbance–Demography Forecasting
+# Forest Disturbance-Structure Analytics
 
 This repository contains the **analysis and figure-generation code** used in the manuscript:
 
-> **Coupling forest disturbance regimes and stand demography reveals emerging risks to Europe’s carbon sink**  
+> **Natural disturbances increasingly affect Europe’s most mature and carbon-rich forests**  
 > *Simon Besnard et al.*  
 > EGUsphere preprint (2025)  
 > 👉 https://egusphere.copernicus.org/preprints/2025/egusphere-2025-6288/
@@ -58,3 +58,12 @@ Besnard, S. et al. (2025).
 *Coupling forest disturbance regimes and stand demography reveals emerging risks to Europe’s carbon sink.*  
 EGUsphere preprint.  
 https://egusphere.copernicus.org/preprints/2025/egusphere-2025-6288/
+
+⚠️ Important:
+This repository does not redistribute the data itself. Users must download the data separately from Zenodo and update local paths accordingly in the workflow scripts.
+
+## Status
+
+🚧 Work in progress
+
+This repository reflects an active research codebase. Minor refactoring and cleanup may occur, but analytical logic corresponding to the manuscript will remain stable.
