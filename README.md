@@ -55,7 +55,7 @@ This repository does **not** redistribute the data itself.
 If you use this code, please cite:
 
 Besnard, S. et al. (2025).  
-*Coupling forest disturbance regimes and stand demography reveals emerging risks to Europe’s carbon sink.*  
+*Natural disturbances increasingly affect Europe’s most mature and carbon-rich forests.*  
 EGUsphere preprint.  
 https://egusphere.copernicus.org/preprints/2025/egusphere-2025-6288/
 
@@ -67,3 +67,5 @@ This repository does not redistribute the data itself. Users must download the d
 🚧 Work in progress
 
 This repository reflects an active research codebase. Minor refactoring and cleanup may occur, but analytical logic corresponding to the manuscript will remain stable.
+
+
