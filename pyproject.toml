@@ -1,0 +1,63 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools>=64",
+    "wheel",
+    "setuptools-scm>=8"
+]
+
+[project]
+name = "structshift"
+version = "0.1.0"
+description = "Python tools for generating figures for the paper: Natural disturbances increasingly affect Europe’s most mature and carbon-rich forests"
+authors = [{ name="Simon Besnard", email="simon.besnard@gfz.de" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: European Union Public Licence 1.2 (EUPL 1.2)"
+]
+requires-python = ">=3.10"
+
+dependencies = [
+    # --- Core numerical stack ---
+    "numpy",
+    "pandas",
+    "geopandas",
+    "scipy",
+    "matplotlib"
+]
+
+[project.urls]
+homepage = "https://github.com/simonbesnard1/structshift"
+documentation = "https://structshift.readthedocs.io/en/latest/"
+source = "https://github.com/simonbesnard1/structshift"
+tracker = "https://github.com/simonbesnard1/structshift/issues"
+
+[tool.mypy]
+enable_error_code = ["ignore-without-code", "redundant-self", "redundant-expr"]
+exclude = ['build']
+files = "structshift"
+show_error_context = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.ruff]
+extend-exclude = ["doc", "_typed_ops.pyi"]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["structshift/tests"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["structshift/tests*", "structshift/tests/*", "structshift/tests/**/*", "scripts*"]
+
+[tool.setuptools_scm]
+fallback_version = "9999"
+
+
