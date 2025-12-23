@@ -19,6 +19,12 @@ This repository is provided **for transparency, reproducibility, and reuse**, an
 
 ---
 
+## Installation
+
+```bash
+pip install git+https://github.com/simonbesnard1/structshift.git
+```
+
 ## Repository structure
 
 ```
