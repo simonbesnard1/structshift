@@ -4,7 +4,8 @@
 """
 Figure 3 — Genus-specific biomass losses under planned and unplanned disturbances
 
-Analysis only. No plotting.
+Author: Simon Besnard
+
 """
 
 from pathlib import Path

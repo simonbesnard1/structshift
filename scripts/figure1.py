@@ -9,7 +9,8 @@ Computes:
 2. Difference matrices (late − early)
 3. Age-selectivity time series with ensemble uncertainty
 
-No plotting is performed here.
+Author: Simon Besnard
+
 """
 
 from pathlib import Path

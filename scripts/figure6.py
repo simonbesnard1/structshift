@@ -10,7 +10,7 @@ Panels:
 Data source:
 - cumulative_biomass_loss_forecast_by_genus.csv
 
-Author: Simon
+Author: Simon Besnard
 """
 
 import numpy as np

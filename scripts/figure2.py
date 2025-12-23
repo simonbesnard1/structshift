@@ -12,7 +12,8 @@ Analysis pipeline:
 5. Quantify structural redistribution using energy distance
 6. Compute per-hex age shifts between periods
 
-No plotting is performed here.
+Author: Simon Besnard
+
 """
 
 from pathlib import Path

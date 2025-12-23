@@ -9,7 +9,7 @@ Panels:
 (c) Biomass loss boxplots
 (d) Pan-European disturbed area (historical + forecast)
 
-Author: Simon
+Author: Simon Besnard
 """
 
 import numpy as np
