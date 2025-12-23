@@ -68,10 +68,12 @@ https://egusphere.copernicus.org/preprints/2025/egusphere-2025-6288/
 ⚠️ Important:
 This repository does not redistribute the data itself. Users must download the data separately from Zenodo and update local paths accordingly in the workflow scripts.
 
-## Status
+## 🚧 Work in progress
 
-🚧 Work in progress
+This repository reflects an **active effort to consolidate the analytical workflows from the manuscript into a reusable Python package**.  
+The core analytical logic and numerical results corresponding to the paper are stable, but the codebase is currently being refactored and modularized (e.g. separation into analysis modules and figure-specific workflows).
 
-This repository reflects an active research codebase. Minor refactoring and cleanup may occur, but analytical logic corresponding to the manuscript will remain stable.
+Minor cleanup, restructuring, and documentation improvements may occur, but these changes are not expected to alter the scientific conclusions of the manuscript.
+
 
 
