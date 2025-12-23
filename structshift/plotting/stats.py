@@ -37,3 +37,8 @@ def violins(data,pos=0,bw_method=None,resolution=50,spread=1,max_num_points=100)
     pointy = pos+np.where(np.random.rand(pointx.shape[0])>0.5,-1,1)*np.random.rand(pointx.shape[0])*pointy*spread
     filly  = (pos-filly*spread,pos+filly*spread)
     return(pointx,pointy,fillx,filly)
+
+
+def cohens_d(a, b):
+    pooled = np.sqrt((np.var(a, ddof=1) + np.var(b, ddof=1)) / 2)
+    return (np.mean(a) - np.mean(b)) / pooled if pooled > 0 else 0

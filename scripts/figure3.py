@@ -14,7 +14,7 @@ from structshift.analysis.ensemble import EnsembleReducer
 from structshift.analysis.spatial_filter import YearPolygonExcluder
 from structshift.analysis.genus_aggregation import aggregate_genus_biomass
 from structshift.utils.area_calc import pixel_area_latlon_km2
-from structshift.plotting.violins import violins
+from structshift.plotting.stats import violins, cohens_d
 
 
 # ---------------------------------------------------------------------
@@ -160,12 +160,6 @@ mpl.rcParams.update({
     "legend.fontsize": 14,
     "text.usetex": True,
 })
-
-
-def cohens_d(a, b):
-    pooled = np.sqrt((np.var(a, ddof=1) + np.var(b, ddof=1)) / 2)
-    return (np.mean(a) - np.mean(b)) / pooled if pooled > 0 else 0
-
 
 def plot_figure3(results, out_path):
 
