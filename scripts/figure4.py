@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 from shapely.geometry import box
+from scipy.stats import pearsonr
 
 from structshift.analysis.ensemble import EnsembleReducer
 from structshift.analysis.spatial_filter import YearPolygonExcluder
@@ -35,6 +36,11 @@ POLYGON_MASK = Path(
     "bounding_box_filter_years_4326.gpkg"
 )
 
+WORLD_GPK = Path(
+    "/misc/glm1/person/besnard/coupling_demography_dist/data/"
+    "ne_10m_admin_0_countries.zip"
+)
+
 START_YEAR = 2011
 PIXEL_RES = 0.0008888888888888889
 HEX_DIAMETER_M = 100_000
@@ -49,7 +55,7 @@ GENUS_GROUPS = {
 }
 
 DISTURBANCES = {
-    "Natural": "wind_bark_beetle",
+    "Natural Disturbance": "wind_bark_beetle",
     "Harvest": "harvest",
 }
 
@@ -98,8 +104,7 @@ def run_figure4_analysis():
 
     # Europe boundary
     world = gpd.read_file(
-        "/misc/glm1/person/besnard/coupling_demography_dist/data/"
-        "ne_10m_admin_0_countries.zip"
+        WORLD_GPK
     ).to_crs(3035)
 
     europe = world[
@@ -154,11 +159,11 @@ def run_figure4_analysis():
     cv_vals = {}
     for genus, ids in GENUS_GROUPS.items():
         cv_vals[genus] = {
-            "2011–2016": cv_by_cell_and_genus(
+            "2011-2016": cv_by_cell_and_genus(
                 gdf_hexed, "hex_id", "biomass",
                 PERIOD_EARLY, "wind_bark_beetle", ids
             ),
-            "2017–2023": cv_by_cell_and_genus(
+            "2017-2023": cv_by_cell_and_genus(
                 gdf_hexed, "hex_id", "biomass",
                 PERIOD_LATE, "wind_bark_beetle", ids
             ),
@@ -257,19 +262,21 @@ def plot_figure4(results, out_path):
             column=col, ax=ax, cmap="RdBu_r",
             vmin=-0.3, vmax=0.3, edgecolor="none",
             legend=True,
-            legend_kwds={"label": r"$\Delta$CV", "shrink": 0.6},
+            legend_kwds={"label": r"$\Delta$CV [adimensional]", "shrink": 0.6},
         )
-        ax.set_title(title)
+        ax.set_title(title, fontsize=14)
         ax.set_axis_off()
 
     # --------------------------------------------------------------
     # (c) CV distributions by genus
     # --------------------------------------------------------------
     species = list(cv_vals.keys())
-    periods = ["2011–2016", "2017–2023"]
-    colors = {"2011–2016": "#66c2a5", "2017–2023": "#fc8d62"}
+    periods = ["2011-2016", "2017-2023"]
+    colors = {"2011-2016": "#66c2a5", "2017-2023": "#fc8d62"}
+    x_positions = []
 
     for i, sp in enumerate(species):
+        period_vals = []
         for j, period in enumerate(periods):
             xpos = i + j * 0.3 - 0.15
             vals = np.asarray(cv_vals[sp][period].dropna())
@@ -282,22 +289,42 @@ def plot_figure4(results, out_path):
             px, py, *_ = violins(vals, pos=xpos, spread=0.25, max_num_points=2000)
             axs[1, 0].scatter(py, px, color=colors[period], alpha=0.3, marker=".")
             axs[1, 0].scatter(xpos, np.median(vals), color="black", marker="d", s=80)
-
+            period_vals.append(vals)
+            x_positions.append(xpos)
+            
+            xpos += 1
+            
         d = cohens_d(
-            cv_vals[sp]["2011–2016"].dropna(),
-            cv_vals[sp]["2017–2023"].dropna(),
+            cv_vals[sp]["2011-2016"].dropna(),
+            cv_vals[sp]["2017-2023"].dropna(),
         )
-        axs[1, 0].text(i, np.max(vals) + 0.02, f"d={d:.2f}",
-                       ha="center", fontsize=12)
+        
+        # Effect size annotation
+        if len(period_vals) == 2 and all(len(p) > 0 for p in period_vals):
+            d = cohens_d(*period_vals)
+            if abs(d) >= 0.8:
+                label = f"{d:.2f} (large)"
+            elif abs(d) >= 0.5:
+                label = f"{d:.2f} (medium)"
+            elif abs(d) >= 0.2:
+                label = f"{d:.2f} (small)"
+            else:
+                label = f"{d:.2f} (trivial)"
+    
+            y_max = max([np.max(p) if len(p) > 0 else 0 for p in period_vals])
+            axs[1, 0].text(np.mean(x_positions[-2:]), y_max + 0.01, label, ha='center', fontsize=12)
+
+    # Legend
+    for label, color in colors.items():
+        axs[1, 0].scatter([], [], color=color, label=label, alpha=0.6)
+    axs[1, 0].legend(frameon=False)
 
     axs[1, 0].set_xticks(range(len(species)))
     axs[1, 0].set_xticklabels(species)
-    axs[1, 0].set_ylabel("CV Biomass")
+    axs[1, 0].set_ylabel("CV Biomass [adimensional]")
     axs[1, 0].set_ylim(0.15, 0.55)
-    axs[1, 0].legend(
-        [plt.Line2D([], [], color=c) for c in colors.values()],
-        colors.keys(), frameon=False
-    )
+    axs[1, 0].spines["top"].set_visible(False)
+    axs[1, 0].spines["right"].set_visible(False)
 
     # --------------------------------------------------------------
     # (d) Time series
@@ -308,20 +335,62 @@ def plot_figure4(results, out_path):
     ]:
         sub = df_cv[df_cv["disturbance"] == label]
         axs[1, 1].plot(sub["year"], sub["cv_median"],
-                       label=label, color=color)
+                       label='Natural Disturbance' if label == 'wind_bark_beetle' else "Harvest" , color=color)
         axs[1, 1].fill_between(sub["year"],
                                sub["cv_q5"], sub["cv_q95"],
                                color=color, alpha=0.3)
 
         slope, intercept, *_ = linregress(sub["year"], sub["cv_median"])
+        
+        # Assuming y_unplanned and y_planned are 1D NumPy arrays of equal length
+        r_value, p_value = pearsonr(sub["year"], sub["cv_median"])
+        
+        print(f"Pearson correlation coefficient: {r_value:.3f}")
+        print(f"P-value: {p_value:.3e}")
+        
+        # Annotation for unplanned
+        if label == 'wind_bark_beetle':
+            annotation_unplanned = (
+                f"Slope = {slope:.4f}\n"
+                f"p = {p_value:.3f}"
+            )
+        else: 
+            annotation_planned = (
+                f"Slope = {slope:.4f}\n"
+                f"p = {p_value:.3f}"
+            )
+            
+        
         axs[1, 1].plot(sub["year"],
                        intercept + slope * sub["year"],
                        color=color, linestyle="--")
 
     axs[1, 1].set_xlabel("Year")
-    axs[1, 1].set_ylabel("CV Biomass")
+    axs[1, 1].set_ylabel("CV Biomass [adimensional]")
+    axs[1, 1].set_title("Spruce dominated disturbed regions", fontsize=14)
     axs[1, 1].xaxis.set_major_locator(MaxNLocator(integer=True))
     axs[1, 1].legend(frameon=False)
+    axs[1, 1].spines["top"].set_visible(False)
+    axs[1, 1].spines["right"].set_visible(False)
+    
+    axs[1, 1].text(
+        0.03, 0.22, annotation_unplanned,
+        transform=axs[1, 1].transAxes,
+        fontsize=13, color="#1b9e77",
+        verticalalignment='top',
+        horizontalalignment='left',
+        bbox=dict(boxstyle="round", facecolor="white", edgecolor="#1b9e77", alpha=0.6)
+    )
+    
+    axs[1, 1].text(
+        0.03, 0.9, annotation_planned,
+        transform=axs[1, 1].transAxes,
+        fontsize=13, color="black",
+        verticalalignment='top',
+        horizontalalignment='left',
+        bbox=dict(boxstyle="round", facecolor="white", edgecolor="black", alpha=0.6)
+    )
+
 
     # --------------------------------------------------------------
     # Panel labels
@@ -335,5 +404,5 @@ def plot_figure4(results, out_path):
 
 plot_figure4(
     results,
-    "/misc/glm1/person/besnard/coupling_demography_dist/figs/fig4_v2.png"
+    "fig4.png"
 )

@@ -43,7 +43,10 @@ POLYGON_MASK = Path(
     "bounding_box_filter_years_4326.gpkg"
 )
 
-WORLD_GPK = Path("//misc/glm1/person/besnard/coupling_demography_dist/data/ne_10m_admin_0_countries.zip")
+WORLD_GPK = Path(
+    "/misc/glm1/person/besnard/coupling_demography_dist/data/"
+    "ne_10m_admin_0_countries.zip"
+)
 
 START_YEAR = 2011
 FOREST_FRACTION_MIN = 0.3

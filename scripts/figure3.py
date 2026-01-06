@@ -63,7 +63,7 @@ def load_data():
         + [f"biomass_m{i}" for i in range(20)]
     )
 
-    df = pd.read_csv(DATA_PATH, usecols=use_cols)
+    df = pd.read_parquet(DATA_PATH, columns=use_cols)
     df["time"] = pd.to_datetime(df["time"])
     df["year"] = df["time"].dt.year
     df = df[df["year"] >= START_YEAR]
