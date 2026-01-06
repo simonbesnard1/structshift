@@ -328,6 +328,6 @@ for label, ax in zip(["(a)", "(b)", "(c)", "(d)"], axes.flat):
 # -----------------------------
 # Save figure
 # -----------------------------
-#plt.savefig("fig1.png", dpi=300)
-#plt.close(fig)
+plt.savefig("fig1.png", dpi=300)
+plt.close(fig)
 

@@ -36,13 +36,13 @@ START_YEAR = 2011
 PIXEL_RES = 0.0008888888888888889  # ~100 m
 
 PERIODS = {
-    "2011–2016": (2011, 2016),
-    "2017–2023": (2017, 2023),
+    "2011-2016": (2011, 2016),
+    "2017-2023": (2017, 2023),
 }
 
 DISTURBANCES = {
-    "Unplanned": "wind_bark_beetle",
-    "Planned": "harvest",
+    "Natural Disturbance": "wind_bark_beetle",
+    "Harvest": "harvest",
 }
 
 GENUS_GROUPS = {
@@ -63,7 +63,7 @@ def load_data():
         + [f"biomass_m{i}" for i in range(20)]
     )
 
-    df = pd.read_parquet(DATA_PATH, columns=use_cols)
+    df = pd.read_csv(DATA_PATH, usecols=use_cols)
     df["time"] = pd.to_datetime(df["time"])
     df["year"] = df["time"].dt.year
     df = df[df["year"] >= START_YEAR]
@@ -172,11 +172,11 @@ def plot_figure3(results, out_path):
                              gridspec_kw={"hspace": 0.1})
 
     period_colors = {
-        "2011–2016": "#66c2a5",
-        "2017–2023": "#fc8d62",
+        "2011-2016": "#66c2a5",
+        "2017-2023": "#fc8d62",
     }
 
-    disturbance_labels = ["Unplanned", "Planned"]
+    disturbance_labels = ["Natural Disturbance", "Harvest"]
     subplot_labels = ["a", "b"]
 
     # --------------------------------------------------------------
@@ -269,16 +269,16 @@ def plot_figure3(results, out_path):
         x = np.arange(len(genus_names))
         width = 0.35
 
-        early = [bar_data["2011–2016"][g] for g in genus_names]
-        late  = [bar_data["2017–2023"][g] for g in genus_names]
+        early = [bar_data["2011-2016"][g] for g in genus_names]
+        late  = [bar_data["2017-2023"][g] for g in genus_names]
 
         ax.bar(x - width/2, [e[0] for e in early],
                yerr=[[e[0]-e[1] for e in early], [e[2]-e[0] for e in early]],
-               width=width, color=period_colors["2011–2016"], capsize=4)
+               width=width, color=period_colors["2011-2016"], capsize=4)
 
         ax.bar(x + width/2, [l[0] for l in late],
                yerr=[[l[0]-l[1] for l in late], [l[2]-l[0] for l in late]],
-               width=width, color=period_colors["2017–2023"], capsize=4)
+               width=width, color=period_colors["2017-2023"], capsize=4)
 
         ax.set_xticks(x)
         ax.set_xticklabels(genus_names)
