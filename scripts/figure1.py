@@ -28,8 +28,7 @@ from structshift.analysis.age_selectivity import AgeSelectivityAnalyzer
 # ---------------------------------------------------------------------
 
 DATA_PATH = Path(
-    "/misc/glm1/person/besnard/coupling_demography_dist/data/"
-    "disturbance_data_combined_v2025-11-1.parquet"
+    "/home/simon/hpc_home/projects/coupling_demography_dist/data/data_extraction/chunks/disturbance_chunk_91.csv"
 )
 
 POLYGON_MASK = Path(
@@ -81,6 +80,7 @@ def load_data() -> pd.DataFrame:
     )
 
     df = pd.read_parquet(DATA_PATH, columns=use_cols)
+    
     df["time"] = pd.to_datetime(df["time"])
     df["year"] = df["time"].dt.year
     df = df[df["year"] >= START_YEAR]

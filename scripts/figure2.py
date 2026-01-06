@@ -43,6 +43,8 @@ POLYGON_MASK = Path(
     "bounding_box_filter_years_4326.gpkg"
 )
 
+WORLD_GPK = Path("//misc/glm1/person/besnard/coupling_demography_dist/data/ne_10m_admin_0_countries.zip")
+
 START_YEAR = 2011
 FOREST_FRACTION_MIN = 0.3
 DISTURBANCE_MIN = 0.5
@@ -109,8 +111,7 @@ def run_figure2_analysis() -> dict:
     # Europe boundary (for clipping + plotting background)
     # --------------------------------------------------------------
     world = gpd.read_file(
-        "/misc/glm1/person/besnard/coupling_demography_dist/data/"
-        "ne_10m_admin_0_countries.zip"
+        WORLD_GPK
     ).to_crs(3035)
 
     europe = world[
@@ -183,6 +184,22 @@ def run_figure2_analysis() -> dict:
         period1=PERIOD_EARLY,
         period2=PERIOD_LATE,
         disturbance_col="wind_bark_beetle",
+        forest_fraction_min=FOREST_FRACTION_MIN,
+        disturbance_min=DISTURBANCE_MIN,
+        min_pixels=MIN_PIXELS_ED,
+        metric="energy",
+    )
+    
+    # --------------------------------------------------------------
+    # Distributional shift (energy distance)
+    # --------------------------------------------------------------
+    hex_grid["energy_dist_harvest"] = distribution_distance_by_cell(
+        gdf_hexed,
+        cell_col="hex_id",
+        value_col="forest_age",
+        period1=PERIOD_EARLY,
+        period2=PERIOD_LATE,
+        disturbance_col="harvest",
         forest_fraction_min=FOREST_FRACTION_MIN,
         disturbance_min=DISTURBANCE_MIN,
         min_pixels=MIN_PIXELS_ED,
@@ -350,6 +367,8 @@ def plot_figure2(results, out_path):
         color="#7570b3",
         fontweight="bold",
     )
+    ax_pdf.spines["top"].set_visible(False)
+    ax_pdf.spines["right"].set_visible(False)  
 
     # ===============================================================
     # (d) Early vs late forest age (Natural disturbance)
@@ -394,6 +413,8 @@ def plot_figure2(results, out_path):
     ax_scatter.set_xlabel("2010 Forest Age disturbed in 2011-2016 [years]")
     ax_scatter.set_ylabel("2010 Forest Age disturbed in 2017-2023 [years]")
     ax_scatter.set_title("Natural Disturbance")
+    ax_scatter.spines["top"].set_visible(False)
+    ax_scatter.spines["right"].set_visible(False)
 
     # ---------------------------------------------------------------
     # Panel labels
