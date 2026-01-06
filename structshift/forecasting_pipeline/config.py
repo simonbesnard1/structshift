@@ -72,3 +72,12 @@ class ForecastConfig:
 
     def biomass_cols(self) -> list[str]:
         return [f"biomass_m{i}" for i in range(self.n_biomass_models)]
+
+
+@dataclass(frozen=True)
+class ForecastGenusConfig(ForecastConfig):
+    genus_groups: dict[str, list[int]] = field(default_factory=lambda: {
+        "Spruce": [1],
+        "Other needleleaf": [0, 2, 5],
+        "Broadleaf": [3, 4, 6],
+    })
