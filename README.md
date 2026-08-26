@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/1017289940.svg)](https://doi.org/10.5281/zenodo.22115850)
+
 # Forest Disturbance-Structure Analytics
 
 This repository contains the **analysis and figure-generation code** used in the manuscript:
